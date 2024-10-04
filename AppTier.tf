@@ -119,37 +119,6 @@ resource "aws_autoscaling_policy" "scale_in" {
   autoscaling_group_name = aws_autoscaling_group.app_asg.name
 }
 
-# CloudWatch Alarms for scaling
-resource "aws_cloudwatch_metric_alarm" "cpu_high" {
-  alarm_name          = "cpu_utilization_high"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = 60
-  statistic           = "Average"
-  threshold           = 60
-  alarm_actions       = [aws_autoscaling_policy.scale_out.arn]
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "cpu_low" {
-  alarm_name          = "cpu_utilization_low"
-  comparison_operator = "LessThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "CPUUtilization"
-  namespace           = "AWS/EC2"
-  period              = 60
-  statistic           = "Average"
-  threshold           = 50
-  alarm_actions       = [aws_autoscaling_policy.scale_in.arn]
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.app_asg.name
-  }
-}
-
 # Optional: EC2 Instance for testing (ensure valid AMI)
 resource "aws_instance" "web_backend" {
   ami             = "ami-047d7c33f6e7b4bc4" # Replace with a valid AMI ID
